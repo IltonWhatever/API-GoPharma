@@ -1,7 +1,7 @@
 # Resources
 from flask_restful import Resource, reqparse, abort
 from flask import jsonify
-from models import db,Cliente,ClienteSchema
+from models import db,Cliente,ClienteSchema,Produto,ProdutoSchema
 
 class ClienteResource(Resource):
     def get(self, cliente_id=None):
@@ -64,3 +64,30 @@ class ClienteResource(Resource):
 
         db.session.commit()
         return ClienteSchema().dump(cliente)
+
+class ProdutoResource(Resource):
+
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('nome', type=str, required=True)
+        parser.add_argument('preco', type=float, required=True)
+        parser.add_argument('saldo', type=int, required=False)
+        args = parser.parse_args()
+
+        produto = Produto(nome=args['nome'],
+                          preco=args['preco'],
+                          saldo=args['saldo'])
+
+
+
+class CompradorResource(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('')
+
+
+
+class VendaResource(Resource):
+    def get(self, venda_id = None):
+        if venda_id is None:
+            vendas = Venda.querry.all()
+            return ()

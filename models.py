@@ -34,7 +34,49 @@ class ItensVenda(db.Model):
     produtoId = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False,primary_key=True)
     vendaId= db.Column(db.Integer, db.ForeignKey('venda.id'), nullable=False,primary_key=True)
 
-# D
-class ClienteSchema(ma.Schema):
+# Schemas from Jason >.>
+class ClienteSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        fields = ('id', 'nome', 'email', 'celular', 'senha', 'confsenha')
+        model = Cliente
+    
+    id = ma.auto_field()
+    nome = ma.auto_field()
+    email = ma.auto_field()
+    celular = ma.auto_field()
+    senha = ma.auto_field()
+    confsenha = ma.auto_field()
+
+class ProdutoSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Produto
+
+    id = ma.auto_field()
+    nome = ma.auto_field()
+    preco = ma.auto_field()
+    saldo = ma.auto_field()
+
+class CompradorSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Comprador
+
+    id = ma.auto_field()
+    nome = ma.auto_field()
+    cpf = ma.auto_field()
+
+class VendaSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Venda
+    
+    id = ma.auto_field()
+    compradorID = ma.auto_field()
+
+class ItensVendaSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ItensVenda
+
+    produtoId = ma.auto_field()
+    vendaId = ma.auto_field()
+
+
+    
+    
