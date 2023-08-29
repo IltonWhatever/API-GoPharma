@@ -12,6 +12,13 @@ class Cliente(db.Model):
     senha = db.Column(db.String(30))
     confsenha = db.Column(db.String(30))
     
+class Produto(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100))
+    preco = db.Column(db.Double)
+    saldo = db.Column(db.Integer)
+    vendas = db.relationship('Venda', secondary='ItensVenda', backref='produtos')
+
 class Comprador(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100))
@@ -19,12 +26,13 @@ class Comprador(db.Model):
 
 class Venda(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    produto = db.relationship('Produto', backref='Venda', lazy=True, cascade="all") # D
+    compradorId = db.Column(db.Integer, db.ForeignKey('comprador.id'), nullable=False)
+    comprador = db.relationship('Comprador')
+    produtos = db.relationship('Produto', secondary='ItensVenda', backref='vendas')
 
-class Produto(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(100))
-    preco = db.Column(db.Double)
+class ItensVenda(db.Model):
+    produtoId = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False,primary_key=True)
+    vendaId= db.Column(db.Integer, db.ForeignKey('venda.id'), nullable=False,primary_key=True)
 
 # D
 class ClienteSchema(ma.Schema):
