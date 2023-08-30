@@ -17,22 +17,23 @@ class Produto(db.Model):
     nome = db.Column(db.String(100))
     preco = db.Column(db.Double)
     saldo = db.Column(db.Integer)
-    vendas = db.relationship('Venda', secondary='ItensVenda', backref='produtos')
 
 class Comprador(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100))
     cpf = db.Column(db.String(11))
+    comprador = db.relationship('Venda', backref='comprador')
 
 class Venda(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     compradorId = db.Column(db.Integer, db.ForeignKey('comprador.id'), nullable=False)
-    comprador = db.relationship('Comprador')
-    produtos = db.relationship('Produto', secondary='ItensVenda', backref='vendas')
+    produtos = db.relationship('Produto', secondary='itensvenda', backref='vendas', lazy='joined')
 
-class ItensVenda(db.Model):
+itensvenda = db.Table('itensvenda', db.Column('produto_id',db.Integer, db.ForeignKey('produto.id')), db.Column('venda_id',db.Integer, db.ForeignKey('venda.id')))
+
+'''class ItensVenda(db.Model):
     produtoId = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False,primary_key=True)
-    vendaId= db.Column(db.Integer, db.ForeignKey('venda.id'), nullable=False,primary_key=True)
+    vendaId= db.Column(db.Integer, db.ForeignKey('venda.id'), nullable=False,primary_key=True)'''
 
 # Schemas from Jason >.>
 class ClienteSchema(ma.SQLAlchemyAutoSchema):
@@ -64,18 +65,12 @@ class CompradorSchema(ma.SQLAlchemyAutoSchema):
     cpf = ma.auto_field()
 
 class VendaSchema(ma.SQLAlchemyAutoSchema):
+    produtos = ma.Nested(ProdutoSchema, many=True)
     class Meta:
         model = Venda
     
     id = ma.auto_field()
-    compradorID = ma.auto_field()
-
-class ItensVendaSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = ItensVenda
-
-    produtoId = ma.auto_field()
-    vendaId = ma.auto_field()
+    compradorId = ma.auto_field()
 
 
     

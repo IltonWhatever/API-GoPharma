@@ -6,7 +6,7 @@ from models import db,Cliente,ClienteSchema,Produto,ProdutoSchema
 class ClienteResource(Resource):
     def get(self, cliente_id=None):
         if cliente_id is None:
-            cliente = Cliente.querry.all()
+            cliente = Cliente.query.all()
             return ClienteSchema(many=True).dumps(cliente)
         
         cliente = Cliente.query.get(cliente_id)
@@ -66,6 +66,12 @@ class ClienteResource(Resource):
         return ClienteSchema().dump(cliente)
 
 class ProdutoResource(Resource):
+    def get(self, produto_id = None):
+        if produto_id is None:
+            produtos = Produto.query.all()
+            return ProdutoSchema(many=True).dumps(produtos)
+        produto = Produto.query.get(produto_id)
+        return ProdutoSchema().dumps(produto)
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -77,6 +83,35 @@ class ProdutoResource(Resource):
         produto = Produto(nome=args['nome'],
                           preco=args['preco'],
                           saldo=args['saldo'])
+    
+    def delete(self, produto_id = None):
+        if produto_id is None:
+            abort(404, message="ID {} do Cliente não encontrado".format(produto_id))
+        Produto.query.filter_by(id=produto_id).delete()
+        db.session.commit()
+
+        return jsonify(msg = {
+            "Resposta": "Cliente {} Deletado com Sucesso".format(produto_id)
+        })
+
+    def put(self, produto_id=None):
+        if produto_id is None:
+            abort(404, message="ID {} do Cliente não encontrado".format(produto_id))
+        
+        parser = reqparse.RequestParser()
+        parser.add_argument('nome', type=str, required=True)
+        parser.add_argument('preco', type=float, required=True)
+        parser.add_argument('saldo', type=int, required=False)
+        args = parser.parse_args()
+
+        produto = Produto.query.get(produto_id)
+
+        produto.nome = args['nome']
+        produto.preco = args['preco']
+        produto.saldo = args['saldo']
+
+        db.session.commit()
+        return ProdutoSchema().dumps(produto)
 
 
 
