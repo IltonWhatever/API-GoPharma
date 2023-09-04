@@ -15,7 +15,7 @@ class Cliente(db.Model):
 class Produto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100))
-    preco = db.Column(db.Double)
+    preco = db.Column(db.Float)
     saldo = db.Column(db.Integer)
 
 class Comprador(db.Model):

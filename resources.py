@@ -116,7 +116,7 @@ class ProdutoResource(Resource):
 class CompradorResource(Resource):
     def get(self, comprador_id = None):
         if comprador_id is None:
-            comprador = Comprador.querry.all
+            comprador = Comprador.query.all
             return CompradorSchema(many=True).dumps(comprador)
 
         comprador = Comprador.query.get(comprador_id)
@@ -161,18 +161,18 @@ class CompradorResource(Resource):
         comprador.email = args['cpf']
 
         db.session.commit()
-        return ClienteSchema().dump(comprador)
+        return ClienteSchema().dumps(comprador)
 
 class VendaResource(Resource):
     def get(self, venda_id = None):
         if venda_id is None:
-            vendas = Venda.querry.all()
+            vendas = Venda.query.all()
             return VendaSchema().dumps(vendas)
 
         venda = Venda.query.get(venda_id)
         return VendaSchema().dumps(venda)
 
-    def put(self):
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('compradorId', type=str, required=True)
         args = parser.parse_args()
@@ -181,4 +181,20 @@ class VendaResource(Resource):
 
         db.session.add(Venda)
         db.session.commit()
-        return ClienteSchema().dump(Venda)
+        return ClienteSchema().dumps(Venda)
+
+    def put(self, venda_id=None):
+        if venda_id is None:
+            abort(404, message="ID {} do Comprador não encontrado".format(venda_id))
+        
+        parser = reqparse.RequestParser()
+        parser.add_argument('compradorId', type=str, required=True)
+        args = parser.parse_args()
+
+        venda = Venda.query.get(venda_id)
+        venda.compradorId = args['compradorId']
+
+        db.session.commit()
+        return ClienteSchema().dumps(Venda)
+
+        
