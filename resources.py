@@ -1,7 +1,7 @@
 # Resources
 from flask_restful import Resource, reqparse, abort
 from flask import jsonify
-from models import db,Cliente,ClienteSchema,Produto,ProdutoSchema, Comprador, CompradorSchema, Venda,VendaSchema
+from models import db,Cliente,ClienteSchema,Produto,ProdutoSchema, Comprador, CompradorSchema, Venda,VendaSchema, ItensVenda, ItensVendaSchema
 
 class ClienteResource(Resource):
     def get(self, cliente_id=None):
@@ -210,3 +210,18 @@ class VendaResource(Resource):
         return jsonify(msg = {
             "Resposta": "Venda {} Deletada com Sucesso".format(venda_id)
         })
+        
+class ItemVendasResource(Resource):
+    def get(self, id=None):
+        if id is None:
+            itensVenda = ItensVenda.query.all()
+            
+            return ItensVendaSchema(many=True).dump(itensVenda)
+        
+        itemVenda = ItensVenda.query.get(id)
+        
+        return ItensVendaSchema().dump(itemVenda)
+
+    
+    
+        

@@ -69,7 +69,7 @@ class VendaSchema(ma.SQLAlchemyAutoSchema):
     id = ma.auto_field()
     compradorId = ma.auto_field()
 
-class ItensVendaSChema(ma.SQLAlchemyAutoSchema):
+class ItensVendaSchema(ma.SQLAlchemyAutoSchema):
     produtos = ma.Nested(ProdutoSchema, many=True)
     vendas = ma.Nested(VendaSchema, many=True)
     class Meta:
