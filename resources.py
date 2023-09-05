@@ -7,10 +7,10 @@ class ClienteResource(Resource):
     def get(self, cliente_id=None):
         if cliente_id is None:
             cliente = Cliente.query.all()
-            return ClienteSchema(many=True).dumps(cliente)
+            return ClienteSchema(many=True).dump(cliente)
         
         cliente = Cliente.query.get(cliente_id)
-        return ClienteSchema().dumps(cliente)
+        return ClienteSchema().dump(cliente)
     
     def post(self):
         parser = reqparse.RequestParser()
@@ -69,9 +69,9 @@ class ProdutoResource(Resource):
     def get(self, produto_id = None):
         if produto_id is None:
             produtos = Produto.query.all()
-            return ProdutoSchema(many=True).dumps(produtos)
+            return ProdutoSchema(many=True).dump(produtos)
         produto = Produto.query.get(produto_id)
-        return ProdutoSchema().dumps(produto)
+        return ProdutoSchema().dump(produto)
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -80,13 +80,16 @@ class ProdutoResource(Resource):
         parser.add_argument('saldo', type=int, required=False)
         args = parser.parse_args()
 
+        if args['saldo'] is None:
+            args['saldo'] 
+
         produto = Produto(nome=args['nome'],
                           preco=args['preco'],
                           saldo=args['saldo'])
     
     def delete(self, produto_id = None):
         if produto_id is None:
-            abort(404, message="ID {} do Cliente não encontrado".format(produto_id))
+            abort(404, message="ID {} do Produto não encontrado".format(produto_id))
         Produto.query.filter_by(id=produto_id).delete()
         db.session.commit()
 
@@ -111,16 +114,16 @@ class ProdutoResource(Resource):
         produto.saldo = args['saldo']
 
         db.session.commit()
-        return ProdutoSchema().dumps(produto)
+        return ProdutoSchema().dump(produto)
 
 class CompradorResource(Resource):
     def get(self, comprador_id = None):
         if comprador_id is None:
-            comprador = Comprador.query.all
-            return CompradorSchema(many=True).dumps(comprador)
+            comprador = Comprador.query.all()
+            return CompradorSchema(many=True).dump(comprador)
 
         comprador = Comprador.query.get(comprador_id)
-        return CompradorSchema().dumps(comprador)
+        return CompradorSchema().dump(comprador)
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -134,16 +137,16 @@ class CompradorResource(Resource):
         db.session.add(comprador)
         db.session.commit()
         
-        return CompradorSchema().dumps(comprador)
+        return CompradorSchema().dump(comprador)
 
     def delete(self, comprador_id = None):
         if comprador_id is None:
             abort(404, message="ID {} do Comprador não encontrado".format(comprador_id))
-        Produto.query.filter_by(id=comprador_id).delete()
+        Comprador.query.filter_by(id=comprador_id).delete()
         db.session.commit()
 
         return jsonify(msg = {
-            "Resposta": "Cliente {} Deletado com Sucesso".format(comprador_id)
+            "Resposta": "Comprador {} Deletado com Sucesso".format(comprador_id)
         })
 
     def put(self, comprador_id = None):
@@ -158,34 +161,34 @@ class CompradorResource(Resource):
         comprador = Comprador.query.get(comprador_id)
 
         comprador.nome = args['nome']
-        comprador.email = args['cpf']
+        comprador.cpf = args['cpf']
 
         db.session.commit()
-        return ClienteSchema().dumps(comprador)
+        return ClienteSchema().dump(comprador)
 
 class VendaResource(Resource):
     def get(self, venda_id = None):
         if venda_id is None:
             vendas = Venda.query.all()
-            return VendaSchema().dumps(vendas)
+            return VendaSchema().dump(vendas)
 
         venda = Venda.query.get(venda_id)
-        return VendaSchema().dumps(venda)
+        return VendaSchema().dump(venda)
 
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('compradorId', type=str, required=True)
         args = parser.parse_args()
 
-        Venda = Cliente(nome=args['compradorId'])
+        venda = Venda(nome=args['compradorId'])
 
-        db.session.add(Venda)
+        db.session.add(venda)
         db.session.commit()
-        return ClienteSchema().dumps(Venda)
+        return ClienteSchema().dump(venda)
 
     def put(self, venda_id=None):
         if venda_id is None:
-            abort(404, message="ID {} do Comprador não encontrado".format(venda_id))
+            abort(404, message="ID {} do Venda não encontrado".format(venda_id))
         
         parser = reqparse.RequestParser()
         parser.add_argument('compradorId', type=str, required=True)
@@ -195,6 +198,14 @@ class VendaResource(Resource):
         venda.compradorId = args['compradorId']
 
         db.session.commit()
-        return ClienteSchema().dumps(Venda)
+        return ClienteSchema().dump(venda)
 
-        
+    def delete(self, venda_id=None):
+        if venda_id is None:
+            abort(404, message="ID {} do Venda não encontrada".format(venda_id))
+        Venda.query.filter_by(id=venda_id).delete()
+        db.session.commit()
+
+        return jsonify(msg = {
+            "Resposta": "Venda {} Deletada com Sucesso".format(venda_id)
+        })

@@ -17,6 +17,7 @@ class Produto(db.Model):
     nome = db.Column(db.String(100))
     preco = db.Column(db.Float)
     saldo = db.Column(db.Integer)
+    produtos = db.relationship('itensvenda', backref='produtos')
 
 class Comprador(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,13 +28,18 @@ class Comprador(db.Model):
 class Venda(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     compradorId = db.Column(db.Integer, db.ForeignKey('comprador.id'), nullable=False)
-    produtos = db.relationship('Produto', secondary='itensvenda', backref='vendas', lazy='joined')
+    vendas = db.relationship('itensvenda', backref='vendas')
 
-itensvenda = db.Table('itensvenda', db.Column('produto_id',db.Integer, db.ForeignKey('produto.id')), db.Column('venda_id',db.Integer, db.ForeignKey('venda.id')))
+class itensvenda(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    produto_id = db.Column(db.Integer, db.ForeignKey('produtos.id'), nullable=False)
+    venda_id = db.Column(db.Integer, db.ForeignKey('vendas.id'), nullable=False)
 
-'''class ItensVenda(db.Model):
-    produtoId = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False,primary_key=True)
-    vendaId= db.Column(db.Integer, db.ForeignKey('venda.id'), nullable=False,primary_key=True)'''
+# itensvenda = db.Table('itensvenda', db.Column('produto_id',db.Integer, db.ForeignKey('produto.id')), db.Column('venda_id',db.Integer, db.ForeignKey('venda.id')))
+
+# '''class ItensVenda(db.Model):
+#     produtoId = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False,primary_key=True)
+#     vendaId= db.Column(db.Integer, db.ForeignKey('venda.id'), nullable=False,primary_key=True)'''
 
 # Schemas from Jason >.>
 class ClienteSchema(ma.SQLAlchemyAutoSchema):
@@ -65,12 +71,22 @@ class CompradorSchema(ma.SQLAlchemyAutoSchema):
     cpf = ma.auto_field()
 
 class VendaSchema(ma.SQLAlchemyAutoSchema):
-    produtos = ma.Nested(ProdutoSchema, many=True)
+    comprador = ma.Nested(CompradorSchema, many=True)
     class Meta:
         model = Venda
     
     id = ma.auto_field()
     compradorId = ma.auto_field()
+
+class ItensVendaSChema(ma.SQLAlchemyAutoSchema):
+    produtos = ma.Nested(ProdutoSchema, many=True)
+    vendas = ma.Nested(VendaSchema, many=True)
+    class Meta:
+        model = itensvenda
+
+    id = ma.auto_field()
+    produto_id = ma.auto_field()
+    venda_id = ma.auto_field()
 
 
     
