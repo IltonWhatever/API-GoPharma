@@ -18,14 +18,12 @@ class ClienteResource(Resource):
         parser.add_argument('email', type=str, required=True)
         parser.add_argument('celular', type=str, required=True)
         parser.add_argument('senha', type=str, required=True)
-        parser.add_argument('confsenha', type=str, required=True)
         args = parser.parse_args()
 
         cliente = Cliente(nome=args['nome'], 
                           email=args['email'],
                           celular=args['celular'],
-                          senha=args['senha'],
-                          confsenha=args['confsenha']
+                          senha=args['senha']
                           )
 
         db.session.add(cliente)
@@ -51,7 +49,6 @@ class ClienteResource(Resource):
         parser.add_argument('email', type=str, required=True)
         parser.add_argument('celular', type=str, required=True)
         parser.add_argument('senha', type=str, required=True)
-        parser.add_argument('confsenha', type=str, required=True)
         args = parser.parse_args()
         
         cliente = Cliente.query.get(cliente_id)
@@ -60,7 +57,6 @@ class ClienteResource(Resource):
         cliente.email = args['email']
         cliente.celular = args['celular']
         cliente.senha = args['senha']
-        cliente.confsenha = args['confsenha']
 
         db.session.commit()
         return ClienteSchema().dump(cliente)
@@ -81,11 +77,16 @@ class ProdutoResource(Resource):
         args = parser.parse_args()
 
         if args['saldo'] is None:
-            args['saldo'] 
+            args['saldo'] = 0 
 
         produto = Produto(nome=args['nome'],
                           preco=args['preco'],
                           saldo=args['saldo'])
+        
+        db.session.add(produto)
+        db.session.commit()
+
+        return ProdutoSchema().dump(produto)
     
     def delete(self, produto_id = None):
         if produto_id is None:
@@ -164,7 +165,7 @@ class CompradorResource(Resource):
         comprador.cpf = args['cpf']
 
         db.session.commit()
-        return ClienteSchema().dump(comprador)
+        return CompradorSchema().dump(comprador)
 
 class VendaResource(Resource):
     def get(self, venda_id = None):
