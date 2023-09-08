@@ -2,6 +2,8 @@
 from flask_restful import Resource, reqparse, abort
 from flask import jsonify
 from models import db,Cliente,ClienteSchema,Produto,ProdutoSchema, Comprador, CompradorSchema, Venda,VendaSchema, ItensVenda, ItensVendaSchema
+from flask_swagger_ui import get_swaggerui_blueprint
+
 
 class ClienteResource(Resource):
     def get(self, cliente_id=None):
