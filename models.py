@@ -32,6 +32,7 @@ class ItensVenda(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False)
     venda_id = db.Column(db.Integer, db.ForeignKey('venda.id'), nullable=False)
+    quantidade = db.Column(db.Integer, nullable=False)
     
 # Schemas from Jason >.>
 class ClienteSchema(ma.SQLAlchemyAutoSchema):
@@ -78,6 +79,7 @@ class ItensVendaSchema(ma.SQLAlchemyAutoSchema):
     id = ma.auto_field()
     produto_id = ma.auto_field()
     venda_id = ma.auto_field()
+    quantidade = ma.auto_field()
 
 
     
