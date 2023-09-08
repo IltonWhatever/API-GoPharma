@@ -62,7 +62,7 @@ class CompradorSchema(ma.SQLAlchemyAutoSchema):
     cpf = ma.auto_field()
 
 class VendaSchema(ma.SQLAlchemyAutoSchema):
-    comprador = ma.Nested(CompradorSchema, many=True)
+    comprador = ma.Nested(CompradorSchema)
     class Meta:
         model = Venda
     
@@ -70,8 +70,8 @@ class VendaSchema(ma.SQLAlchemyAutoSchema):
     compradorId = ma.auto_field()
 
 class ItensVendaSchema(ma.SQLAlchemyAutoSchema):
-    produtos = ma.Nested(ProdutoSchema, many=True)
-    vendas = ma.Nested(VendaSchema, many=True)
+    produtos = ma.Nested(ProdutoSchema)
+    vendas = ma.Nested(VendaSchema)
     class Meta:
         model = ItensVenda
 

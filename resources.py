@@ -171,7 +171,7 @@ class VendaResource(Resource):
     def get(self, venda_id = None):
         if venda_id is None:
             vendas = Venda.query.all()
-            return VendaSchema().dump(vendas)
+            return VendaSchema(many=True).dump(vendas)
 
         venda = Venda.query.get(venda_id)
         return VendaSchema().dump(venda)
@@ -181,7 +181,7 @@ class VendaResource(Resource):
         parser.add_argument('compradorId', type=str, required=True)
         args = parser.parse_args()
 
-        venda = Venda(nome=args['compradorId'])
+        venda = Venda(compradorId=args['compradorId'])
 
         db.session.add(venda)
         db.session.commit()
@@ -212,16 +212,51 @@ class VendaResource(Resource):
         })
         
 class ItemVendasResource(Resource):
-    def get(self, id=None):
-        if id is None:
+    def get(self, item_venda_id=None):
+        if item_venda_id is None:
             itensVenda = ItensVenda.query.all()
             
             return ItensVendaSchema(many=True).dump(itensVenda)
         
-        itemVenda = ItensVenda.query.get(id)
+        itemVenda = ItensVenda.query.get(int(item_venda_id))
         
         return ItensVendaSchema().dump(itemVenda)
-
-    
-    
         
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('produtoId', type=str, required=True)
+        parser.add_argument('vendaId', type=str, required=True)
+        args = parser.parse_args()
+
+        itemVenda = ItensVenda(produto_id=args['produtoId'], venda_id=args['vendaId'])
+
+        db.session.add(itemVenda)
+        db.session.commit()
+        return ClienteSchema().dump(itemVenda)
+    
+    def put(self, item_venda_id=None):
+        if item_venda_id is None:
+            abort(404, message="ID {} do Venda não encontrado".format(item_venda_id))
+            
+        parser = reqparse.RequestParser()
+        parser.add_argument('produtoId', type=str, required=True)
+        parser.add_argument('vendaId', type=str, required=True)
+        args = parser.parse_args()
+
+        itemVenda = ItensVenda.query.get(item_venda_id)
+        itemVenda.produto_id = args['produtoId']
+        itemVenda.venda_id = args['vendaId']
+
+        db.session.commit()
+        return ClienteSchema().dump(itemVenda)
+        
+    def delete(self, item_venda_id=None):
+        if item_venda_id is None:
+            abort(404, message="ID {} do Item Venda não encontrada".format(item_venda_id))
+
+        ItensVenda.query.filter_by(id=item_venda_id).delete()
+        db.session.commit()
+
+        return jsonify(msg = {
+            "Resposta": "Item Venda {} Deletada com Sucesso".format(item_venda_id)
+        })
