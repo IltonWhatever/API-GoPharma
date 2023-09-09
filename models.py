@@ -1,10 +1,18 @@
 # Modelo
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_bcrypt import Bcrypt
 db = SQLAlchemy()
 ma = Marshmallow()
+bc = Bcrypt()
 
 class Cliente(db.Model):
+    def set_senha(self, senha):
+        self.senha = bc.generate_password_hash(senha).decode('utf-8')
+        
+    def check_senha(self, senha):
+        return bc.check_password_hash(self.senha, senha)
+
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100))
     email = db.Column(db.String(100))
@@ -43,7 +51,6 @@ class ClienteSchema(ma.SQLAlchemyAutoSchema):
     nome = ma.auto_field()
     email = ma.auto_field()
     celular = ma.auto_field()
-    senha = ma.auto_field()
 
 class ProdutoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -71,8 +78,8 @@ class VendaSchema(ma.SQLAlchemyAutoSchema):
     compradorId = ma.auto_field()
 
 class ItensVendaSchema(ma.SQLAlchemyAutoSchema):
-    produtos = ma.Nested(ProdutoSchema)
-    vendas = ma.Nested(VendaSchema)
+    # produtos = ma.Nested(ProdutoSchema)
+    # vendas = ma.Nested(VendaSchema)
     class Meta:
         model = ItensVenda
 

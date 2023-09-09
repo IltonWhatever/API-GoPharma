@@ -24,9 +24,11 @@ class ClienteResource(Resource):
 
         cliente = Cliente(nome=args['nome'], 
                           email=args['email'],
-                          celular=args['celular'],
-                          senha=args['senha']
+                          celular=args['celular']
                           )
+        
+        # Criptografa a Senha
+        cliente.set_senha(args['senha'])
 
         db.session.add(cliente)
         db.session.commit()
@@ -58,10 +60,10 @@ class ClienteResource(Resource):
         cliente.nome = args['nome']
         cliente.email = args['email']
         cliente.celular = args['celular']
-        cliente.senha = args['senha']
+        cliente.set_senha(args['senha'])
 
         db.session.commit()
-        return ClienteSchema().dump(cliente)
+        return ClienteSchema().dump(cliente), 201
 
 class ProdutoResource(Resource):
     def get(self, produto_id = None):
@@ -69,7 +71,7 @@ class ProdutoResource(Resource):
             produtos = Produto.query.all()
             return ProdutoSchema(many=True).dump(produtos)
         produto = Produto.query.get(produto_id)
-        return ProdutoSchema().dump(produto)
+        return ProdutoSchema().dump(produto), 200
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -88,7 +90,7 @@ class ProdutoResource(Resource):
         db.session.add(produto)
         db.session.commit()
 
-        return ProdutoSchema().dump(produto)
+        return ProdutoSchema().dump(produto), 201
     
     def delete(self, produto_id = None):
         if produto_id is None:
@@ -117,7 +119,7 @@ class ProdutoResource(Resource):
         produto.saldo = args['saldo']
 
         db.session.commit()
-        return ProdutoSchema().dump(produto)
+        return ProdutoSchema().dump(produto), 201
 
 class CompradorResource(Resource):
     def get(self, comprador_id = None):
@@ -126,7 +128,7 @@ class CompradorResource(Resource):
             return CompradorSchema(many=True).dump(comprador)
 
         comprador = Comprador.query.get(comprador_id)
-        return CompradorSchema().dump(comprador)
+        return CompradorSchema().dump(comprador), 200
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -140,7 +142,7 @@ class CompradorResource(Resource):
         db.session.add(comprador)
         db.session.commit()
         
-        return CompradorSchema().dump(comprador)
+        return CompradorSchema().dump(comprador), 201
 
     def delete(self, comprador_id = None):
         if comprador_id is None:
@@ -167,7 +169,7 @@ class CompradorResource(Resource):
         comprador.cpf = args['cpf']
 
         db.session.commit()
-        return CompradorSchema().dump(comprador)
+        return CompradorSchema().dump(comprador), 201
 
 class VendaResource(Resource):
     def get(self, venda_id = None):
@@ -176,7 +178,7 @@ class VendaResource(Resource):
             return VendaSchema(many=True).dump(vendas)
 
         venda = Venda.query.get(venda_id)
-        return VendaSchema().dump(venda)
+        return VendaSchema().dump(venda), 200
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -187,7 +189,7 @@ class VendaResource(Resource):
 
         db.session.add(venda)
         db.session.commit()
-        return VendaSchema().dump(venda)
+        return VendaSchema().dump(venda), 201
 
     def put(self, venda_id=None):
         if venda_id is None:
@@ -201,7 +203,7 @@ class VendaResource(Resource):
         venda.compradorId = args['compradorId']
 
         db.session.commit()
-        return VendaSchema().dump(venda)
+        return VendaSchema().dump(venda), 201
 
     def delete(self, venda_id=None):
         if venda_id is None:
@@ -225,13 +227,13 @@ class ItemVendasResource(Resource):
         
         itemVenda = ItensVenda.query.get(int(item_venda_id))
         
-        return ItensVendaSchema().dump(itemVenda)
+        return ItensVendaSchema().dump(itemVenda), 200
         
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('produtoId', type=str, required=True)
         parser.add_argument('vendaId', type=str, required=True)
-        parser.add_argument('quantidade', type=str, required=True)
+        parser.add_argument('quantidade', type=int, required=True)
         args = parser.parse_args()
         produto = Produto.query.get(args['produtoId'])
 
@@ -243,7 +245,7 @@ class ItemVendasResource(Resource):
 
         db.session.add(itemVenda)
         db.session.commit()
-        return ClienteSchema().dump(itemVenda)
+        return ClienteSchema().dump(itemVenda), 201
     
     def put(self, item_venda_id=None):
         if item_venda_id is None:
@@ -252,19 +254,35 @@ class ItemVendasResource(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('produtoId', type=str, required=True)
         parser.add_argument('vendaId', type=str, required=True)
+        parser.add_argument('quantidade', type=int, required=True)
         args = parser.parse_args()
 
         itemVenda = ItensVenda.query.get(item_venda_id)
+        id_produto = itemVenda.produto_id
+
+        produto = Produto.query.get(int(id_produto))
+        saldo = itemVenda.quantidade - args['quantidade']
+        if(produto.saldo < saldo):
+            abort(404, message="Item {} não contem estoque suficente para mudança".format(args['produtoId']))
+
+        produto.saldo = produto.saldo + saldo
+
         itemVenda.produto_id = args['produtoId']
         itemVenda.venda_id = args['vendaId']
+        itemVenda.quantidade = args['quantidade']
 
         db.session.commit()
-        return ItensVendaSchema().dump(itemVenda)
+        return ItensVendaSchema().dump(itemVenda), 201
         
     def delete(self, item_venda_id=None):
         if item_venda_id is None:
             abort(404, message="ID {} do Item Venda não encontrada".format(item_venda_id))
 
+        itensvenda = ItensVenda.query.get(int(item_venda_id))
+        id_produto = itensvenda.produto_id
+        produto = Produto.query.get(int(id_produto))
+        produto.saldo = produto.saldo + itensvenda.quantidade
+        
         ItensVenda.query.filter_by(id=item_venda_id).delete()
         db.session.commit()
 
