@@ -261,7 +261,7 @@ class ItemVendasResource(Resource):
         id_produto = itemVenda.produto_id
 
         produto = Produto.query.get(int(id_produto))
-        saldo = itemVenda.quantidade - args['quantidade']
+        saldo = itemVenda.quantidade + args['quantidade']
         if(produto.saldo < saldo):
             abort(404, message="Item {} não contem estoque suficente para mudança".format(args['produtoId']))
 
