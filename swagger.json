@@ -1,41 +1,662 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "title": "Sample API",
-      "description": "A sample API that demonstrates how to use Flask-SwaggerUI.",
-      "version": "1.0"
-    },
-    "basePath": "/api",
-    "schemes": [
-      "http"
-    ],
-    "consumes": [
-      "application/json"
-    ],
-    "produces": [
-      "application/json"
-    ],
-    "paths": {
-      "/hello": {
-        "get": {
-          "summary": "Returns a simple greeting message.",
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful response.",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "message": {
-                    "type": "string"
-                  }
-                }
+  "swagger": "2.0",
+  "info": {
+    "title": "API GoPharma",
+    "description": "Back-end da aplicação 'GoPharma'",
+    "version": "1.0"
+  },
+  "basePath": "",
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/cliente": {
+      "get": {
+        "summary": "Retorna todos os clientes.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
               }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Cria um novo cliente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "celular": {
+                  "type": "string"
+                },
+                "senha": {
+                  "type": "string"
+                }
+              },
+              "required": ["nome", "email", "celular", "senha"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Cliente criado com sucesso.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/cliente/{cliente_id}": {
+      "get": {
+        "summary": "Retorna um cliente específico.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "cliente_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID do cliente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza um cliente existente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "cliente_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID do cliente."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "celular": {
+                  "type": "string"
+                },
+                "senha": {
+                  "type": "string"
+                }
+              },
+              "required": ["nome", "email", "celular", "senha"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente atualizado com sucesso.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Exclui um cliente existente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "cliente_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID do cliente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente excluído com sucesso.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/produto": {
+      "get": {
+        "summary": "Retorna todos os produtos.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adiciona um novo produto.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string"
+                },
+                "preco": {
+                  "type": "number",
+                  "format": "float"
+                },
+                "saldo": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "required": ["nome", "preco", "saldo"]
+            }
+          }
+        ]
+      }
+    },
+    "/produto/{produto_id}": {
+      "get": {
+        "summary": "Retorna um produto específico.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "produto",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID do produto."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza um produto existente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "produto_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID do produto."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string"
+                },
+                "preco": {
+                  "type": "number",
+                  "format": "float"
+                },
+                "saldo": {
+                  "type": "integer",
+                  "format":"int32"
+                }
+              },
+              "required": ["nome", "preco", "saldo"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto atualizado com sucesso.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Exclui um produto existente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "produto_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID do cliente."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto excluído com sucesso.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/comprador": {
+      "get": {
+        "summary": "Retorna todos os compradores.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adiciona um novo comprador.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string"
+                },
+                "cpf": {
+                  "type": "string"
+                }
+              },
+              "required": ["nome", "cpf"]
+            }
+          }
+        ]
+      }
+    },
+    "/comprador/{comprador_id}": {
+      "get": {
+        "summary": "Retorna um comprador específico.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "comprador_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID do comprador."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza um comprador existente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "comprador_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID do Comprador."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nome": {
+                  "type": "string"
+                },
+                "cpf": {
+                  "type": "string"
+                }
+              },
+              "required": ["nome", "cpf"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comprador atualizado com sucesso.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Exclui um comprador existente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "comprador_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID do comprador."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "comprador excluído com sucesso.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/venda": {
+      "get": {
+        "summary": "Retorna todas as vendas.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adiciona uma nova venda.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "compradorId": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "required": ["compradorId"]
+            }
+          }
+        ]
+      }
+    },
+    "/venda/{venda_id}": {
+      "get": {
+        "summary": "Retorna uma venda específica.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "venda_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID da venda."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza uma venda existente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "venda_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID da venda."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "compradorId": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "required": ["compradorId"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Venda atualizada com sucesso.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Exclui uma venda existente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "venda_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID da venda."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "venda excluída com sucesso.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/itens-venda": {
+      "get": {
+        "summary": "Retorna todas os itens venda.",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adiciona uma novo item venda.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "produtoId": {
+                  "type": "integer",
+                  "format": "int32"
+                }, 
+                "vendaId": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "quantidade": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "required": ["produtoId", "vendaId", "quantidade"]
+            }
+          }
+        ]
+      }
+    },
+    "/itens-venda/{item_venda_id}": {
+      "get": {
+        "summary": "Retorna um item venda específica.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "item_venda_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID do item venda."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resposta bem-sucedida.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza um item venda existente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "item_venda_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID da venda."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "produtoId": {
+                  "type": "integer",
+                  "format": "int32"
+                }, 
+                "vendaId": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "quantidade": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "required": ["produtoId", "vendaId", "quantidade"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item venda atualizada com sucesso.",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Exclui um item venda existente.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "item_venda_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int32",
+            "description": "ID da venda."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item venda excluída com sucesso.",
+            "schema": {
+              "type": "object"
             }
           }
         }
       }
     }
   }
+}

@@ -231,8 +231,8 @@ class ItemVendasResource(Resource):
         
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('produtoId', type=str, required=True)
-        parser.add_argument('vendaId', type=str, required=True)
+        parser.add_argument('produtoId', type=int, required=True)
+        parser.add_argument('vendaId', type=int, required=True)
         parser.add_argument('quantidade', type=int, required=True)
         args = parser.parse_args()
         produto = Produto.query.get(args['produtoId'])
@@ -252,8 +252,8 @@ class ItemVendasResource(Resource):
             abort(404, message="ID {} do Venda não encontrado".format(item_venda_id))
             
         parser = reqparse.RequestParser()
-        parser.add_argument('produtoId', type=str, required=True)
-        parser.add_argument('vendaId', type=str, required=True)
+        parser.add_argument('produtoId', type=int, required=True)
+        parser.add_argument('vendaId', type=int, required=True)
         parser.add_argument('quantidade', type=int, required=True)
         args = parser.parse_args()
 

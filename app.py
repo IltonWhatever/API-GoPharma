@@ -1,5 +1,5 @@
 # Imports
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, json
 from flask_restful import Api
 from models import db, ma
 from resources import ClienteResource, ProdutoResource, CompradorResource, VendaResource, ItemVendasResource
